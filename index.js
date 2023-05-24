@@ -1,13 +1,33 @@
 // console.log("checking nodemon functionality")
-const express = require("express");
-const session = require("express-session");
+// const express = require("express");
+// const session = require("express-session");
+import express from "express";
+import session from "express-session";
+// redis
+import { createClient } from "redis";
+import RedisStore from "connect-redis";
 
 const app = express();
 const port = 3000;
 
+// if you want to use redis as session store
+// connect to redis
+let redisClient = createClient();
+redisClient.connect().then(()=>{console.log("connect to redis")}).catch(console.error);
+
+// initialize redis store
+let redisStore = new RedisStore({
+    client: redisClient,
+    prefix: "myapp:",
+})
+
+// if you want to use mongo as session store
+
+
 // Configure session middleware
 app.use(
   session({
+    store: redisStore,
     secret: "your-secret-key",
     resave: false,
     saveUninitialized: false,
